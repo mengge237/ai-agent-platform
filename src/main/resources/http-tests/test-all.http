@@ -1,0 +1,29 @@
+### 第1步：获取智能体ID
+GET http://localhost:8080/api/agent/list
+
+> {%
+    if (response.body.code === 200 && response.body.data.length > 0) {
+        client.global.set("agentId", response.body.data[0].id);
+        console.log("✓ 智能体ID: " + response.body.data[0].id);
+        console.log("✓ 智能体名称: " + response.body.data[0].name);
+    }
+%}
+
+### 第2步：测试对话（先执行第1步）
+POST http://localhost:8080/api/agent/chat/{{agentId}}
+Content-Type: application/json
+
+{
+  "message": "你好"
+}
+
+### 第3步：其他问题
+POST http://localhost:8080/api/agent/chat/{{agentId}}
+Content-Type: application/json
+
+{
+  "message": "你能做什么？"
+}
+
+### 第4步：查看状态
+GET http://localhost:8080/api/agent/status/{{agentId}}

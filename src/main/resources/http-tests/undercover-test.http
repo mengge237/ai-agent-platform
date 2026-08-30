@@ -1,0 +1,49 @@
+### ============================================
+### 谁是卧底游戏 API 测试
+### ============================================
+
+### 1. 创建游戏房间
+POST http://localhost:8080/api/game/undercover/create
+Content-Type: application/json
+
+{
+  "players": ["张三", "李四", "王五", "赵六", "小明", "小红"],
+  "category": "水果"
+}
+
+### 2. 获取房间信息（把上面的roomId复制过来）
+GET http://localhost:8080/api/game/undercover/room/abc123
+
+### 3. 玩家1生成描述
+POST http://localhost:8080/api/game/undercover/describe
+Content-Type: application/json
+
+{
+  "roomId": "房间ID",
+  "playerId": "张三"
+}
+
+### 4. 玩家2生成描述
+POST http://localhost:8080/api/game/undercover/describe
+Content-Type: application/json
+
+{
+  "roomId": "房间ID",
+  "playerId": "李四"
+}
+
+### 5. 玩家1投票
+POST http://localhost:8080/api/game/undercover/vote
+Content-Type: application/json
+
+{
+  "roomId": "房间ID",
+  "playerId": "张三",
+  "discussion": "张三说这是红色的水果，李四说这是甜甜的..."
+}
+
+### 6. 获取所有描述
+GET http://localhost:8080/api/game/undercover/descriptions/房间ID
+
+### 7. 获取投票结果
+GET http://localhost:8080/api/game/undercover/votes/房间ID
