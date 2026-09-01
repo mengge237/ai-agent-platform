@@ -1,0 +1,49 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: mpostor
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+  web:
+    resources:
+      static-locations: classpath:/static/
+  mvc:
+    static-path-pattern: /**
+
+logging:
+  level:
+    com.smxy.agent: DEBUG
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# AI 配置
+ai:
+  # ✓ 改为 zhipu 使用智谱AI，改为 mock 使用模拟
+  default-provider: zhipu
+  providers:
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      model: gpt-3.5-turbo
+      base-url: https://api.openai.com/v1
+      timeout: 30000
+    deepseek:
+      api-key: ${DEEPSEEK_API_KEY:}
+      model: deepseek-chat
+      base-url: https://api.deepseek.com/v1
+      timeout: 30000
+    zhipu:
+      api-key: ${ZHIPU_API_KEY:}
+      model: glm-4.7-flash
+      base-url: https://open.bigmodel.cn/api/paas/v4
+      timeout: 30000
+
+# 智能体配置
+agent:
+  heartbeat-interval: 30000
+  max-context-length: 10
+  session-timeout: 3600000
