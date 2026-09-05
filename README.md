@@ -1,5 +1,8 @@
 # ai-agent-platform（MPOSTOR 游戏平台 · 后端）
 
+![lang](https://img.shields.io/badge/lang-Java-informational) ![status](https://img.shields.io/badge/status-maintained-brightgreen)
+
+
 > 工业风 AI 桌游平台后端。配套前端项目：`E:\NET Program\ai-undercover-agent`（纯 HTML/JS，live-server 端口 3000）。
 > 项目名与 Java 包名 `com.smxy.agent` 为历史约定，**勿改**。
 
@@ -18,16 +21,16 @@
 
 | 游戏 | 联机 | 单机 | 说明 |
 |---|---|---|---|
-| 谁是卧底 | ✓ WS（一期） | ✕ | 完整发言/投票流程，AI 玩家 |
-| 拆弹小队 | ✓ bomb-room | ✓ number-bomb | 轮流剪线逼近密码，剪中密码线拆弹获胜（含干扰线/熔断线阻碍） |
-| 成语接龙 | ✓ idiom-room | ✓ idiom-chain | LLM 裁判，2 犯淘汰，房主可跳过 |
-| 海龟汤 | ✓ turtle-room | ✓ turtle-soup | 房主掌握汤底手动判答，20 问上限 |
-| 趣味问答 | ✓ quiz-room | ✓ quiz | 同题竞技，全员答完揭晓，排名结算 |
+| 谁是卧底 |  WS（一期） |  | 完整发言/投票流程，AI 玩家 |
+| 拆弹小队 |  bomb-room |  number-bomb | 轮流剪线逼近密码，剪中密码线拆弹获胜（含干扰线/熔断线阻碍） |
+| 成语接龙 |  idiom-room |  idiom-chain | LLM 裁判，2 犯淘汰，房主可跳过 |
+| 海龟汤 |  turtle-room |  turtle-soup | 房主掌握汤底手动判答，20 问上限 |
+| 趣味问答 |  quiz-room |  quiz | 同题竞技，全员答完揭晓，排名结算 |
 
 **难度系统（v2.1）**：创建房间时选择 简单/普通/困难（`createRoom` data 带 `difficulty`，非法值回落 normal）。
 - 谁是卧底：三档词库 —— 困难档为形容词强化的近似词对（如 冰镇西瓜/常温西瓜）
 - 拆弹小队：阻碍线密度按难度缩放（easy 无障碍，hard 加密）；单机拆弹同规则
-- 成语接龙/海龟汤/趣味问答：LLM 出题提示词按难度调节（大众成语/简单场景/常识题 ↔ 生僻成语/多重反转/冷知识）
+- 成语接龙/海龟汤/趣味问答：LLM 出题提示词按难度调节（大众成语/简单场景/常识题  生僻成语/多重反转/冷知识）
 
 其他能力：
 
@@ -131,8 +134,8 @@ tail -f backend-<标记>.log
 
 ## 八、WS 协议速览
 
-- Envelope：客户端 → `{type, playerId, data}`；服务端单播 `{type, message, data}`；房间广播为扁平 map
-- **认证**：连接后先发 `{type:"auth", data:{token}}` → `authSuccess{username}` / `error`
+- Envelope：客户端  `{type, playerId, data}`；服务端单播 `{type, message, data}`；房间广播为扁平 map
+- **认证**：连接后先发 `{type:"auth", data:{token}}`  `authSuccess{username}` / `error`
   - 需认证：createRoom/joinRoom/startGame/rejoinRoom/leaveRoom/closeRoom/resetRoom/kickPlayer 及全部游戏动作
   - 公开：join、listRooms、heartbeat
 - **创建房间**：createRoom data 带 `gameType`（undercover|bomb|idiom|turtle|quiz，缺省 undercover）+ `difficulty`（easy|normal|hard，缺省 normal，非法回落 normal）；roomList/roomCreated 回显 difficulty
@@ -200,7 +203,7 @@ tail -f backend-<标记>.log
 
 ### 三期（v2.1：拆弹重构 + 阻碍 + 难度 + 开局过渡）
 
-**拆弹重构（数字炸弹 → 拆弹）**
+**拆弹重构（数字炸弹  拆弹）**
 
 - 拆弹小队（bomb-room）/ 拆弹专家（number-bomb）：引爆密码藏在开区间，剪中密码线即**拆弹获胜**（DEFUSED），剪线次数耗尽全员阵亡（BOOM）；全程不下发密码，区间收窄提示
 - 后端 `BombController` + `BombRoomLogic` 重写，消息流兼容旧客户端
@@ -219,13 +222,13 @@ tail -f backend-<标记>.log
 
 - `createRoom` data 加 `difficulty`（easy|normal|hard，非法回落 normal），`RoomData.difficulty` 随房间携带，各游戏开局消息全部回显
 - 谁是卧底：三档词库 —— 困难档为**形容词强化的近似词对**（如 冰镇西瓜/常温西瓜，10 类 × 3 档）
-- 拆弹：easy 无障碍线；hard 阻碍密度翻倍（REST：4+2 根 → 9+4 根；WS：2+1 根 → 3+2 根）
-- 成语接龙/海龟汤/趣味问答：LLM 提示词按难度调节（基础成语/简单场景/常识题 ↔ 生僻成语/多重反转/冷知识）
+- 拆弹：easy 无障碍线；hard 阻碍密度翻倍（REST：4+2 根  9+4 根；WS：2+1 根  3+2 根）
+- 成语接龙/海龟汤/趣味问答：LLM 提示词按难度调节（基础成语/简单场景/常识题  生僻成语/多重反转/冷知识）
 - 大厅两表单共用难度选择器（记忆 localStorage），房间卡片显示难度徽章；单机拆弹页也有难度选择
 
 **开局过渡动画**
 
-- `MPOSTOR.fx.deployTransition(label)`：等待 → 对局的全屏工业风部署遮罩（DEPLOY 大标题 + 逐行自检 + 警示条纹 + 渐出），挂在 5 个游戏页的开局入口（卧底在待命区开局/重连进对局时触发 / 4 房间 started）
+- `MPOSTOR.fx.deployTransition(label)`：等待  对局的全屏工业风部署遮罩（DEPLOY 大标题 + 逐行自检 + 警示条纹 + 渐出），挂在 5 个游戏页的开局入口（卧底在待命区开局/重连进对局时触发 / 4 房间 started）
 
 **成就栏（Achievement Wall）**
 
@@ -236,13 +239,13 @@ tail -f backend-<标记>.log
 
 - 症状：创建房间后落到对局页只见发言界面（提示词「???」），任何操作报「游戏未开始」，且无开局/解散入口
 - 对局页新增**待命区** `#phaseWait`：房主见「» 开始游戏 / 解散房间」，非房主见等待提示；待命期不再显示发言框
-- 开局流转正：房主在待命区点开始 → 全员就地收 `gameStarted`（含词对/难度/全员词表）→ 部署过渡 → 进入发言；大厅停留者仍走原跳转路径
-- 解散功能：房主可在对局页解散；修复 `roomClosed` 广播静默丢弃 bug（`closeRoom` 先删房导致 `broadcastToRoom` 查不到房间，改为权限预检 → 广播 → 删房）
+- 开局流转正：房主在待命区点开始  全员就地收 `gameStarted`（含词对/难度/全员词表） 部署过渡  进入发言；大厅停留者仍走原跳转路径
+- 解散功能：房主可在对局页解散；修复 `roomClosed` 广播静默丢弃 bug（`closeRoom` 先删房导致 `broadcastToRoom` 查不到房间，改为权限预检  广播  删房）
 - 待命期间成员进出自动重拉快照；开局竞争（他人已开）静默同步；按钮防卡死重置
 
 **其他**
 
-- **全站 emoji 清除**：前端 UI、后端日志、README 全部改用文本标签（`[BOMB]` 等）与单色符号（✓ ✕ ✂ 等）
+- **全站 emoji 清除**：前端 UI、后端日志、README 全部改用文本标签（`[BOMB]` 等）与单色符号（   等）
 - 后端修复 4 处：bomb-rest 范围校验（非法范围不吞校验）、bomb 终局后置校验 404、createRoom 数据校验、rejoin 空 data 防御
 - 修复 `generateWordPair` 空类别 NPE（Map.ofEntries 不允许 null 键，类别缺省回退「食物」）
 
@@ -251,7 +254,7 @@ tail -f backend-<标记>.log
 - 后端 `./mvnw clean compile -q` 通过；重启成功
 - **拆弹 REST 冒烟 53/53**（含 DECOY/FUSE 机制、剪线预算算术、BOOM 路径、小范围高密度确定性观察、难度档位 easy/hard/非法回落）
 - **WS 5 场景冒烟 112/112**（bomb 含威胁计数/两房终局/难度房 easy+hard；undercover 含困难档形容词词对；idiom/turtle/quiz 全流程）
-- **卧底浏览器流冒烟 34/34**（大厅创建 → 待命快照 → 待命区开局 → 全员收 gameStarted → 解散广播 → 死房 rejoin 报错）
+- **卧底浏览器流冒烟 34/34**（大厅创建  待命快照  待命区开局  全员收 gameStarted  解散广播  死房 rejoin 报错）
 - 前端改动 JS `node --check` 全过；页面 200；live-server 3000 / 后端 8080 正常
 
 ## 十一、已知边界
